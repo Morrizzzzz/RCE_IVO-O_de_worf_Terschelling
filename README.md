@@ -3,4 +3,4 @@ This reposity contains a set of analyses scripts to reconstruct an archaeologica
 
 The notebook is self explanatory.
 
-<img src=".//img/Afbeelding_analyse_0608206.png" alt="" style="display: inline-block; height: 1000; width: 1250; vertical-align: text-bottom; margin: 0 0.25rem;" />
+<img src=".//img/Afbeelding_analyse_06082026.png" alt="" style="display: inline-block; height: 1000; width: 1250; vertical-align: text-bottom; margin: 0 0.25rem;" />
