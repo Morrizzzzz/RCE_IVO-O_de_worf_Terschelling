@@ -1,0 +1,60 @@
+{
+    "horizontal_reference": "RD New / EPSG:28992",
+    "common_origin": {
+        "x_origin": 151500.0,
+        "y_origin": 600500.0,
+        "z_origin": -1.7000000476837158
+    },
+    "coordinate_conversion": {
+        "rd_x": "blender_x + x_origin",
+        "rd_y": "blender_y + y_origin",
+        "nap_z": "blender_z + z_origin"
+    },
+    "meshes": [
+        {
+            "input_tif": "mound_volume_results\\reconstructed_mound.tif",
+            "output_ply": "ply_output\\reconstructed_mound.ply",
+            "original_crs": "LOCAL_CS[\"Amersfoort / RD New\",UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+            "horizontal_reference": "RD New / EPSG:28992",
+            "vertices": 806,
+            "faces": 1499,
+            "step": 2
+        },
+        {
+            "input_tif": "data\\AHN5_M_151000_600000.TIF",
+            "output_ply": "ply_output\\AHN5_M_151000_600000.ply",
+            "original_crs": "LOCAL_CS[\"Amersfoort / RD New + NAP height\",UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+            "horizontal_reference": "RD New / EPSG:28992",
+            "vertices": 975049,
+            "faces": 1922257,
+            "step": 2
+        },
+        {
+            "input_tif": "ditch_results\\reconstructed_ditch_absolute.tif",
+            "output_ply": "ply_output\\reconstructed_ditch_absolute.ply",
+            "original_crs": "LOCAL_CS[\"Amersfoort / RD New + NAP height\",UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+            "horizontal_reference": "RD New / EPSG:28992",
+            "vertices": 1854,
+            "faces": 3379,
+            "step": 2
+        },
+        {
+            "input_tif": "ditch_results\\existing_dem_with_ditch.tif",
+            "output_ply": "ply_output\\existing_dem_with_ditch.ply",
+            "original_crs": "LOCAL_CS[\"Amersfoort / RD New + NAP height\",UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+            "horizontal_reference": "RD New / EPSG:28992",
+            "vertices": 3524,
+            "faces": 6774,
+            "step": 2
+        },
+        {
+            "input_tif": "ditch_results\\reconstructed_ditch_relative.tif",
+            "output_ply": "ply_output\\reconstructed_ditch_relative.ply",
+            "original_crs": "LOCAL_CS[\"Amersfoort / RD New + NAP height\",UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+            "horizontal_reference": "RD New / EPSG:28992",
+            "vertices": 1869,
+            "faces": 3422,
+            "step": 2
+        }
+    ]
+}

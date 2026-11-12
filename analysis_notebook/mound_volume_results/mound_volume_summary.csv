@@ -1,0 +1,2 @@
+source_file,layer,crs,mound_area_m2,mound_perimeter_m,slope_width_m,slope_angle_horizontal_degrees,slope_angle_vertical_degrees,slope_percentage,maximum_height_m,mean_height_m,plateau_present,plateau_area_m2,integration_step_m,estimated_volume_m3
+.//data//de_worf.gpkg,contour_mound,EPSG:28992,803.6986111373076,103.24110316866678,8,45,45,99.99999999999999,7.999999999999999,4.571648244646328,True,184.36686943380144,0.05,3674.2273448305637

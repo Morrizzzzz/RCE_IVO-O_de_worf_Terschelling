@@ -1,0 +1,82 @@
+[
+  {
+    "ditchAngle": 1,
+    "moundAngle": 1,
+    "ditchVolume": 112.74175262451172,
+    "analyticalDitchVolume": 106.2417566414556,
+    "moundVolume": 64.13387686505,
+    "height": 0.13964051942574068,
+    "actualDepth": 0.1134579220334143,
+    "flatWidth": 0
+  },
+  {
+    "ditchAngle": 5,
+    "moundAngle": 15,
+    "ditchVolume": 565.086669921875,
+    "analyticalDitchVolume": 532.5072887114468,
+    "moundVolume": 984.5062498556978,
+    "height": 2.1435935394489816,
+    "actualDepth": 0.5686763129185061,
+    "flatWidth": 0
+  },
+  {
+    "ditchAngle": 10,
+    "moundAngle": 20,
+    "ditchVolume": 1138.890869140625,
+    "analyticalDitchVolume": 1073.2293606921755,
+    "moundVolume": 1337.309387445267,
+    "height": 2.9117618741296187,
+    "actualDepth": 1.1461253746050224,
+    "flatWidth": 0
+  },
+  {
+    "ditchAngle": 15,
+    "moundAngle": 30,
+    "ditchVolume": 1726.7159423828125,
+    "analyticalDitchVolume": 1629.9622991673466,
+    "moundVolume": 2121.31614660181,
+    "height": 4.618802153517006,
+    "actualDepth": 1.7,
+    "flatWidth": 0.31102725426581657
+  },
+  {
+    "ditchAngle": 30,
+    "moundAngle": 30,
+    "ditchVolume": 2574.141845703125,
+    "analyticalDitchVolume": 2462.6360983127825,
+    "moundVolume": 2121.31614660181,
+    "height": 4.618802153517006,
+    "actualDepth": 1.7,
+    "flatWidth": 7.111027254265817
+  },
+  {
+    "ditchAngle": 45,
+    "moundAngle": 45,
+    "ditchVolume": 2878.481689453125,
+    "analyticalDitchVolume": 2767.4158618657134,
+    "moundVolume": 3674.2273448305637,
+    "height": 7.999999999999999,
+    "actualDepth": 1.7,
+    "flatWidth": 9.6
+  },
+  {
+    "ditchAngle": 60,
+    "moundAngle": 60,
+    "ditchVolume": 3056.996826171875,
+    "analyticalDitchVolume": 2943.380540396548,
+    "moundVolume": 6363.948439805428,
+    "height": 13.856406460551014,
+    "actualDepth": 1.7,
+    "flatWidth": 11.037009084755272
+  },
+  {
+    "ditchAngle": 89,
+    "moundAngle": 89,
+    "ditchVolume": 3182.824951171875,
+    "analyticalDitchVolume": 3176.4855738243764,
+    "moundVolume": 210496.34360802907,
+    "height": 458.31969304607316,
+    "actualDepth": 1.7,
+    "flatWidth": 12.94065277924406
+  }
+]

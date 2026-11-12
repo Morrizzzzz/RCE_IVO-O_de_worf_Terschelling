@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#244b3d">
+  <meta name="description" content="Explore the possible shape of De Worf on Terschelling. Adjust mound and ditch slopes in a live 3D reconstruction based on the original GIS notebook.">
+  <title>De Worf — Terrain Lab</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 0 6M4 4v6h6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm0 10 9-5M12 12 3 7m9 5v10"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-11v2"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h5l2-3h4l2 3h5v13H3Z"/><circle cx="12" cy="13" r="4"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+</defs></svg>
+<header class="site-header">
+  <a class="brand" href="./" aria-label="De Worf Terrain Lab home">
+    <svg class="brandmark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M4 32 12 23 17 10 30 7 40 18 44 32 34 41 16 41Z"/><path d="m10 30 7-8 4-8 8-1 7 8 3 9-7 6H18Z"/><path d="m17 28 6-9h5l5 8-4 4h-8Z"/></svg>
+    <span>DE WORF <span class="brand-separator">/</span> <span class="brand-secondary">TERRAIN LAB</span></span>
+  </a>
+  <nav aria-label="Resources"><button id="method-open" class="text-button">About the model <svg class="icon"><use href="#i-info"/></svg></button><a href="https://github.com/Morrizzzzz/RCE_IVO-O_de_worf_Terschelling/blob/main/reconstructing_mound_terschelling.ipynb" target="_blank" rel="noopener" class="notebook-link">Original notebook <svg class="icon"><use href="#i-arrow"/></svg></a></nav>
+</header>
+<main>
+  <section class="intro">
+    <div><p class="eyebrow"><span class="location-dot"></span> LIES, TERSCHELLING · THE NETHERLANDS</p><h1>A landscape, reconstructed.</h1><p class="intro-copy">Explore the possible form of De Worf. Two angles, a different history.</p></div>
+    <div class="intro-tag"><span class="status-dot"></span> INTERACTIVE RESEARCH MODEL <span class="tag-sub">13th-century stinswier · scenario explorer</span></div>
+  </section>
+
+  <div id="load-error" class="error-banner" role="alert" hidden></div>
+  <section class="workspace" aria-label="Terrain reconstruction workspace">
+    <aside class="parameters panel">
+      <div class="panel-heading"><div><p class="eyebrow">01 / EXPERIMENT</p><h2>Shape the landscape</h2></div><button id="reset" class="icon-button" title="Reset angles to 15° and 30°" aria-label="Reset angles"><svg class="icon"><use href="#i-reset"/></svg></button></div>
+      <p class="panel-description">Adjust the slopes. See the geometry and earth volumes respond.</p>
+      <fieldset class="angle-group ditch-group" disabled>
+        <legend><span class="number-badge">α</span> Ditch side angle</legend>
+        <div class="angle-value"><label for="ditch-number" class="sr-only">Ditch angle in degrees</label><input id="ditch-number" type="number" min="1" max="89" step="0.5" value="15"><span>°</span><span class="angle-reference">from horizontal</span></div>
+        <label class="sr-only" for="ditch-angle">Ditch side angle</label><input id="ditch-angle" class="angle-slider" type="range" min="1" max="89" step="0.5" value="15">
+        <div class="range-labels"><span>1° · gentle</span><span>89° · steep</span></div>
+        <div class="dimension-row"><span>Width <strong>13 m</strong></span><span>Depth limit <strong>1.7 m</strong></span></div>
+        <p class="shape-note" id="ditch-shape">Depth-capped · 0.31 m flat bottom</p>
+      </fieldset>
+      <fieldset class="angle-group mound-group" disabled>
+        <legend><span class="number-badge">β</span> Mound slope angle</legend>
+        <div class="angle-value"><label for="mound-number" class="sr-only">Mound slope angle in degrees</label><input id="mound-number" type="number" min="1" max="89" step="0.5" value="30"><span>°</span><span class="angle-reference">from horizontal</span></div>
+        <label class="sr-only" for="mound-angle">Mound slope angle</label><input id="mound-angle" class="angle-slider" type="range" min="1" max="89" step="0.5" value="30">
+        <div class="range-labels"><span>1° · gentle</span><span>89° · steep</span></div>
+        <div class="dimension-row"><span>Inward slope <strong>8 m</strong></span><span>Plateau <strong>184 m²</strong></span></div>
+      </fieldset>
+      <p id="angle-error" role="status" class="input-error" hidden></p>
+      <div class="parameter-footer"><svg class="icon"><use href="#i-info"/></svg><p>Angles are independent assumptions. The model does not automatically balance soil volumes.</p></div>
+    </aside>
+
+    <div class="visual-column">
+      <section class="viewer panel" aria-label="Interactive three-dimensional terrain">
+        <div class="viewer-toolbar"><div class="segmented" role="group" aria-label="Terrain view"><button id="view-model" class="active" aria-pressed="true">Reconstruction</button><button id="view-ahn" aria-pressed="false">AHN5 terrain</button></div><span class="live-status"><span></span> LIVE MODEL</span></div>
+        <div id="scene" tabindex="0" role="img" aria-label="Interactive 3D model. Drag to orbit, scroll to zoom, right-drag to pan. View buttons below also support keyboard use."></div>
+        <div id="loading" class="loading"><span class="loader"></span> Preparing the Terschelling terrain…</div>
+        <div class="scene-topline"><span id="datum-label">RELATIVE HEIGHT · METRES</span><span class="north-arrow" title="North reference; rotates with the camera"><span id="north-needle">↑</span>N</span></div>
+        <div class="view-buttons" role="group" aria-label="Camera controls"><button id="camera-3d" class="active" title="Isometric view">3D</button><button id="camera-top" title="Top view">Top</button><button id="camera-side" title="East–west side view">Side</button><span></span><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="camera-reset" aria-label="Reset camera" title="Reset camera"><svg class="icon"><use href="#i-reset"/></svg></button></div>
+        <div class="scene-bottom"><div id="scene-legend" class="legend"><span><i class="swatch mound"></i>Mound</span><span><i class="swatch ditch"></i>Ditch</span><span><i class="swatch ground"></i>Reference surface</span></div><label class="wireframe-toggle"><input type="checkbox" id="wireframe"> Mesh</label></div>
+        <div class="viewer-caption"><span>Drag to orbit <b>·</b> Scroll to zoom <b>·</b> Right-drag to pan</span><button id="snapshot" title="Download this view as PNG"><svg class="icon"><use href="#i-camera"/></svg> Snapshot</button></div>
+      </section>
+      <div class="metrics panel" aria-live="polite" aria-atomic="true">
+        <div class="metric"><span>Reconstructed height</span><strong id="metric-height">—</strong><small>above assumed ground</small></div>
+        <div class="metric"><span>Mound volume <i class="mini-dot green"></i></span><strong id="metric-mound">—</strong><small>inward-buffer integration</small></div>
+        <div class="metric"><span>Excavated ditch <i class="mini-dot amber"></i></span><strong id="metric-ditch">—</strong><small>0.5 m raster estimate</small></div>
+        <div class="metric"><span>Actual ditch depth</span><strong id="metric-depth">—</strong><small>maximum 1.70 m</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="insights">
+    <div class="profile-panel panel"><div class="insight-heading"><div><p class="eyebrow">02 / READ THE FORM</p><h2>Through the mound</h2></div><span class="subtle-label" id="profile-label">WEST → EAST · TRUE SCALE</span></div><svg id="profile" viewBox="0 0 720 160" role="img" aria-label="East–west terrain cross-section through the grid origin"></svg><p class="chart-note" id="profile-note">A central east–west section. Zero is an assumed ground surface, not NAP.</p></div>
+    <div class="balance-panel panel"><div class="insight-heading"><div><p class="eyebrow">03 / FOLLOW THE SOIL</p><h2>Does the earth add up?</h2></div><svg class="icon"><use href="#i-cube"/></svg></div><div class="balance-head"><strong id="balance-number">—</strong><span id="balance-type">additional soil required</span></div><div class="budget-track" aria-hidden="true"><span id="coverage-bar"></span></div><div class="budget-labels"><span id="coverage-label">—</span><span>mound demand</span></div><p id="balance-note" class="balance-note">Comparing excavated ditch soil with reconstructed mound volume.</p></div>
+  </section>
+  <footer class="page-footer"><p>Built from the De Worf research notebook <span>·</span> RD New / EPSG:28992 <span>·</span> 0.5 m terrain grid</p><div><button id="download-summary" class="text-button"><svg class="icon"><use href="#i-download"/></svg> Export scenario</button><button id="share" class="text-button">Copy scenario link <svg class="icon"><use href="#i-arrow"/></svg></button></div></footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+</main>
+
+<dialog id="method-dialog" aria-labelledby="method-title"><div class="dialog-header"><span class="eyebrow">THE RECONSTRUCTION</span><button id="method-close" class="icon-button" aria-label="Close model information">×</button></div><h2 id="method-title">An experiment in earth.</h2><p>De Worf is a medieval <em>stinswier</em> in Lies on Terschelling. The original research notebook explores whether soil excavated from its surrounding ditch could account for the mound.</p><h3>The original geometry, in your browser</h3><p>The real <code>contour_mound</code> polygon comes from <code>de_worf.gpkg</code>. The ditch extends 13 m outward; the mound rises over 8 m inward before reaching a plateau.</p><div class="formula"><span>Ditch depth</span><code>min(distance to edge × tan(α), 1.7 m)</code><span>Mound height</span><code>min(inward distance, 8 m) × tan(β)</code></div><p>Ditch volume uses the notebook’s 0.5 m raster distance transform. Mound volume integrates inward-buffer areas at 0.05 m intervals. These are the quantities shown in the live results.</p><h3>Two views, two height references</h3><p><strong>Reconstruction</strong> puts the hypothetical mound and ditch on a common zero surface. Heights are relative, not NAP. This view combines the notebook’s relative models; it is not a historical terrain measurement.</p><p><strong>AHN5 terrain</strong> shows the actual 0.5 m DTM in metres above NAP. Changing angles does not alter the measured terrain. The live metrics continue to describe your reconstruction.</p><p>The display mound is rasterised on the AHN grid, with a slightly different alignment from the notebook’s separate mound raster. Reported mound volumes retain the notebook’s vector integration. Missing AHN cells remain gaps.</p><h3>Reference measurements</h3><dl class="reference-list"><div><dt>Mound contour area</dt><dd>803.70 m²</dd></div><div><dt>Upper plateau area</dt><dd>184.37 m²</dd></div><div><dt>Observed positive mound volume</dt><dd>939.02 m³</dd></div><div><dt>Observed maximum relative height</dt><dd>2.53 m</dd></div></dl><p>The observed values use the notebook’s fitted reference plane from a 1–5 m ring, excluding the lowest and highest 2% of ring heights.</p><h3>How to interpret a scenario</h3><p>Angles are measured from horizontal. A gentle ditch may not reach 1.7 m; steeper sides produce a flat bottom. The soil budget assumes one cubic metre excavated equals one cubic metre deposited, without compaction, erosion or imported soil. A deficit or surplus is a comparison, not an archaeological conclusion.</p><p class="source-note">Source: <a id="pinned-source" href="https://github.com/Morrizzzzz/RCE_IVO-O_de_worf_Terschelling" target="_blank" rel="noopener">RCE De Worf notebook</a> · AHN5 DTM · Application source distributed under GPL-3.0. Independent interactive adaptation; not an official RCE website.</p></dialog>
+<noscript><p class="error-banner">Enable JavaScript to use the interactive model.</p></noscript>
+<script type="module" src="./app.js"></script>
+</body></html>

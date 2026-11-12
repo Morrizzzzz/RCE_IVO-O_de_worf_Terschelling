@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+__pycache__/
+*.pyc
+*.tar.gz
+*.zip
+source-data/AHN5_M_151000_600000.TIF
