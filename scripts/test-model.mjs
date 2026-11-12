@@ -26,3 +26,4 @@ assert.ok(defaults.balance<0);
 assert.equal(calculateModel(meta,ditch,10,30).flatWidth,0);
 assert.ok(calculateModel(meta,ditch,45,30).balance>0);
 console.log(`PASS: ${fixtures.length} scenarios match independent Python notebook calculations; depth cap, terrain values, invalid inputs, V-shaped and flat-bottomed transitions verified.`);
+await import('./test-dynamic.mjs');

@@ -1,196 +1,167 @@
-# RCE_IVO-O_de_worf_Terschelling
-This reposity contains a set of analyses scripts to reconstruct an archaeological mound on the island of Terschelling in the Netherlands. It are analyses scripts developed by the Rijksdienst voor het Cultureel Erfgoed.
+# De Worf — Terrain Lab, versie 2
 
-The notebook is self explanatory.
+Interactieve 3D-webapp op basis van het De Worf-notebook van Maurice de Kleijn / RCE.
+De echte heuvelcontour en een uitsnede van het AHN5-DTM zijn meegeleverd.
+De website draait volledig in de browser en is geschikt voor GitHub Pages.
+Er is op GitHub Pages geen ChatGPT-login, Python-server, token of API-sleutel nodig.
 
-<img src=".//img/Afbeelding_analyse_06082026.png" alt="" style="display: inline-block; height: 1000; width: 1250; vertical-align: text-bottom; margin: 0 0.25rem;" />
+## Nieuw: drie afzonderlijk vergrendelde afmetingen
 
+| Parameter | Standaard | Instelbaar bereik | Bij openen |
+|---|---:|---:|---|
+| `ditch_width` — grachtbreedte naar buiten | 13,0 m | 1–25 m | Vergrendeld |
+| `ditch_depth` — maximale grachtdiepte | 1,7 m | 0,1–5 m | Vergrendeld |
+| `slope_width` — horizontale hellingbreedte naar binnen | 8,0 m | 0,5–14 m | Vergrendeld |
 
+Klik bij een afmeting op **Locked** (het slotje). Het veld wordt **Editable** en
+kan met het getalveld of de schuifregelaar worden aangepast, in stappen van 0,1 m.
+Klik opnieuw op het slotje om de gekozen waarde vast te zetten. De andere
+parameters blijven onafhankelijk vergrendeld.
 
+**Reset all parameters** herstelt beide hoeken (15° en 30°), alle drie afmetingen
+(13,0 / 1,7 / 8,0 m) en zet alle drie slotjes weer dicht. Bij een gedeelde scenariolink
+worden de meegestuurde waarden geladen, eveneens vergrendeld.
 
-# De Worf — Terrain Lab
+De maximale grachtbreedte houdt de geometrie binnen de meegeleverde AHN-uitsnede.
+De maximale hellingbreedte houdt een plateau binnen de bestaande heuvelcontour.
+De ingestelde grachtdiepte is een **bovengrens**: bij flauwe hellingen kan de gracht
+ondieper blijven. De hoeken blijven vrij instelbaar tussen 1° en 89°.
 
-A static, interactive 3D adaptation of Maurice de Kleijn / RCE's
-`reconstructing_mound_terschelling.ipynb`. It uses the actual De Worf polygon
-and a crop of the AHN5 0.5 m DTM. No Python server, API key, account or build
-step is required to run the web app.
+## Publiceren op GitHub Pages — eenvoudigste route
 
-## Open the app
+1. Pak het ZIP-bestand uit.
+2. Open de map **`dist`**. Hierin staat `index.html`.
+3. Upload **de inhoud van `dist`**, inclusief `data` en `vendor`, naar de hoofdmap
+   van je website-repository op GitHub. Upload dus niet alleen het ZIP-bestand
+   en laat `index.html` niet in een extra bovenliggende map staan.
+4. Open **Settings → Pages** in de repository.
+5. Kies **Deploy from a branch**, selecteer **main** en **/ (root)** en klik op **Save**.
+6. Wacht tot de publicatie voltooid is. De website-URL verschijnt onder Settings → Pages.
 
-The published app is at https://de-worf-terrain-lab.packedspoon2.chatgpt.site
-(owner-private by default). For your own public GitHub Pages copy, follow
-the steps below.
+Vervang bij een update alle websitebestanden en de mappen `data` en `vendor`.
+Deze versie heeft naast de oude bestanden ook `geometry.js`, nieuwe geometriegegevens
+in `metadata.json` en JSTS in `vendor` nodig. Alleen `app.js` vervangen is onvoldoende.
+Alle paden zijn relatief en werken ook onder een GitHub Pages-projectpad.
 
-## Interactive controls
+### Alternatief: de complete broncode publiceren via GitHub Actions
 
-- Ditch angle (`ditch_angle_degrees`): default **15°**.
-- Mound angle (`slope_angle_degrees`): default **30°**.
-- Both accept **1–89°**, with sliders and numeric entry. Angles are from horizontal.
-- Drag the 3D terrain to orbit; scroll to zoom; right-drag to pan.
-- Use **3D / Top / Side**, zoom buttons, or **Mesh** to inspect the geometry.
-- Switch between the hypothetical **Reconstruction** and measured **AHN5 terrain**.
-- Inspect the central east–west section and the live volume comparison.
-- **Snapshot** downloads the view as a PNG with scenario labels.
-- **Export scenario** downloads parameters, results, assumptions and provenance as JSON.
-- **Copy scenario link** stores angles and the selected view in the URL.
-- The reset icon restores 15° / 30°.
+Upload de volledige inhoud van dit ZIP-bestand naar de repository-root, inclusief
+**`.github/workflows/pages.yml`**. Kies **Settings → Pages → Source → GitHub Actions**.
+Start daarna **Actions → Deploy De Worf to GitHub Pages → Run workflow**.
+De workflow test de berekeningen en publiceert de map `dist`.
+Toekomstige pushes naar `main` starten automatisch een nieuwe publicatie.
+Er is geen installatie- of buildstap nodig. Bij een andere standaardbranch pas je
+de branchnaam in de workflow aan.
 
-WebGL is required for the 3D scene. Use a modern Firefox, Chrome, Edge or
-Safari browser with graphics acceleration available. Opening `index.html`
-directly with `file://` will not work because the page fetches local data.
+## Bediening
 
-## Publish on GitHub Pages
+- Linkermuisknop slepen: roteren. Scrollen: zoomen. Rechtermuisknop slepen: verschuiven.
+- **3D / Top / Side**: cameraweergave; **Mesh**: triangulatie zichtbaar maken.
+- **Reconstruction / AHN5 terrain**: hypothetische reconstructie of gemeten terrein.
+- De resultaten, dwarsdoorsnede en grondbalans veranderen mee met de parameters.
+- **Snapshot**: PNG van de huidige 3D-weergave met hoeken en afmetingen.
+- **Export scenario**: JSON met alle vijf parameters, resultaten, slotstatus en brongegevens.
+- **Copy scenario link**: link met alle vijf parameters en de geselecteerde terreinweergave.
 
-### Recommended: included GitHub Actions workflow
-
-1. Extract the ZIP. Create a GitHub repository (or use a dedicated app branch/repository).
-2. Upload the **contents** of the extracted folder to the repository root.
-   The root should contain `dist/`, `scripts/`, `package.json`, `README.md`,
-   and **`.github/workflows/pages.yml`**. Check that the hidden `.github`
-   folder is included. Do not upload only the ZIP file.
-3. In the repository, open **Settings → Pages**.
-4. Under **Build and deployment → Source**, select **GitHub Actions**.
-5. Open **Actions → Deploy De Worf to GitHub Pages → Run workflow**.
-   Future pushes to `main` will also deploy automatically.
-6. Wait for the workflow to finish. The deployment step and Settings → Pages
-   show your website's actual URL.
-
-This workflow tests the model, then publishes `dist/`. There is no npm install
-or build step. If your default branch is not `main`, update the workflow's
-branch filter or use **Run workflow**.
-
-### Simpler alternative: deploy from a branch
-
-Upload only the **contents of `dist/`** to the root of a dedicated repository,
-so that `index.html` is directly at the root. Choose **Settings → Pages →
-Deploy from a branch → main → / (root) → Save**. Do not choose this mode if
-`index.html` is still inside `dist/`. Keep `vendor/` and `data/` beside it.
-
-All URLs are relative, so the app also works under a GitHub project subpath.
-No GitHub token is used by the website itself.
-
-## Run locally
-
-From the extracted project directory:
+De 3D-weergave vereist WebGL. Open de website via HTTP(S), niet door rechtstreeks
+op `index.html` te dubbelklikken. Lokaal testen:
 
 ```sh
 python -m http.server 8000 --directory dist
 ```
 
-Then open http://localhost:8000 in your browser.
+Open vervolgens http://localhost:8000.
 
-## Scientific model and height references
+## Berekeningen en hoogtereferenties
 
-Fixed values reproduce the notebook:
+De gracht wordt bij een gewijzigde breedte opnieuw naar buiten gebufferd. Vervolgens
+worden het 0,5 m-rastermasker en de Euclidische afstand tot de dichtstbijzijnde rand
+opnieuw berekend. De vensterafronding volgt het notebook. Diepte per cel:
 
-| Parameter | Value |
+`min(afstand_tot_rand × tan(grachthoek), ingestelde_maximale_diepte)`
+
+De heuvelhoogte gebruikt de volledige afstand tot de binnenrand, begrensd door de
+geselecteerde hellingbreedte:
+
+`min(afstand_naar_binnen, hellingbreedte) × tan(heuvelhoek)`
+
+Het heuvelvolume gebruikt de oorspronkelijke Shapely-binnenbufferoppervlakken op
+0,05 m-intervallen tot de gekozen hellingbreedte. Het plateau wordt opnieuw gebufferd
+voor de 3D-contour en de oppervlakte. De grondbalans vergelijkt grachtuitgraving met
+heuvelvolume, zonder compactie, erosie of grondaanvoer te modelleren.
+
+| Resultaat met standaardwaarden | Waarde |
 |---|---:|
-| Ditch width, outward from the contour | 13 m |
-| Hard ditch depth limit | 1.7 m |
-| Mound's inward slope width | 8 m |
-| Mound contour area | 803.6986 m² |
-| Plateau area | 184.3669 m² |
-| Ditch raster cell size | 0.5 × 0.5 m |
-| Mound integration step | 0.05 m |
+| Gereconstrueerde heuvelhoogte | 4,618802 m |
+| Gereconstrueerd heuvelvolume | 2121,316147 m³ |
+| Grachtvolume uit raster | 1726,7159 m³ |
+| Analytisch grachtvolume (doorsnede × middenlijn) | 1629,962299 m³ |
+| Plateauoppervlakte | 184,3669 m² |
+| Huidig positief heuvelvolume | 939,019338 m³ |
 
-Ditch depth is `min(distance_to_edge * tan(ditch_angle), 1.7)`. Its distance
-grid preserves the notebook's exact window, rasterisation and SciPy Euclidean
-distance transform. A gentle angle produces a V-shaped profile; a steeper
-angle reaches the depth cap and develops a flat bottom.
+De primaire grachtvolumemetriek gebruikt het raster; de analytische schatting staat
+ook in de JSON-export. Kleine verschillen in het laatste decimaal ontstaan door
+floating-point optellingen.
 
-Mound height is `min(inward_distance, 8) * tan(mound_angle)`. Mound **volume**
-uses the original Shapely inward-buffer area integral, not a visual-mesh sum.
-The precomputed integral is 3674.227344830564 m³; multiply by the slope tangent.
+**Reconstruction:** relatieve hoogtes boven/onder een aangenomen nulvlak, niet NAP.
+De weergave combineert de relatieve heuvel- en grachtmodellen. Het heuvelraster ligt
+op het AHN-raster; de uitlijning verschilt iets van de losse heuvel-TIFF uit het
+notebook. Het gerapporteerde heuvelvolume volgt de vectorintegratie.
 
-The notebook includes older narrative examples that differ from its later,
-depth-capped code. This application follows the executable model and the
-stored numerical outputs, including the hard 1.7 m cap.
+**AHN5 terrain:** bestaande maaiveldhoogtes in m NAP. Parameters veranderen deze
+metingen niet. De resultaatkaarten blijven de gekozen reconstructie beschrijven.
+NoData-cellen blijven gaten. Het model gebruikt geen verticale overdrijving.
 
-At **15° / 30°** the expected results are:
-
-| Quantity | Value |
-|---|---:|
-| Reconstructed maximum mound height | 4.618802 m |
-| Reconstructed mound volume | 2121.316147 m³ |
-| Raster-derived excavated ditch volume | 1726.7159 m³ |
-| Analytical ditch cross-section × centreline estimate | 1629.962299 m³ |
-| Additional soil required (raster ditch comparison) | 394.60 m³ |
-| Flat ditch bottom width | 0.311027 m |
-| Present-day positive mound volume | 939.019338 m³ |
-| Present-day maximum height above fitted plane | 2.531369 m |
-
-The analytical ditch estimate is included in the JSON export; the primary
-live metric uses the raster estimate, as labelled.
-
-**Reconstruction view:** mound and ditch on a common assumed zero surface,
-in relative metres. It is a hypothetical shape, not an absolute NAP model.
-The display mound uses an AHN-aligned 0.5 m distance raster, whose alignment
-differs slightly from the notebook's separately exported mound TIFF.
-Reported mound volume still follows the original vector calculation.
-
-**AHN5 view:** measured terrain in metres NAP. No synthetic ditch or mound
-is added in this view, and angle changes do not change the measurements.
-NoData cells remain gaps. The live result cards always describe the scenario.
-
-Unlike the notebook's `existing_dem_with_ditch.tif`, the relative combined
-view does not subtract a synthetic ditch from today's AHN terrain. It makes
-the assumed reconstruction explicit and avoids mixing NAP and relative heights.
-Vertical scale is 1:1 in both views. All reported volumes use the native data,
-independently of camera orientation and zoom.
-
-The soil balance assumes equal volumes excavated and deposited. Compaction,
-bulking, erosion, imported soil and structures are not modelled. The app does
-not claim that any selected angle reconstructs the actual historical shape.
-
-## Validation
+## Validatie
 
 ```sh
 node scripts/test-model.mjs
 ```
 
-Eight independent Python reference scenarios test shallow and steep angles,
-the 1.7 m depth cap, V-shaped/flat-bottom transitions, mound integration,
-invalid inputs and finite reconstructed surface values. Default results match
-the notebook outputs. JavaScript syntax checks passed.
+De acht oorspronkelijke hoekscenario's en elf scenario's met gewijzigde afmetingen
+komen overeen met onafhankelijk in Python berekende referenties. Er zijn controles
+op rastermaskers, afstandstransformatie, maximale diepte, plateauoppervlakte,
+vergrendeling, reset, parameterbereiken en gedeelde URLs. JavaScript-syntax is gecontroleerd.
 
-The build environment's preview browser could not create a WebGL context.
-Page layout and the graphics-error state were inspected; full 3D rendering
-and interaction were not visually verified in that environment.
+De previewbrowser in de bouwomgeving ondersteunt geen WebGL. De nieuwe velden en
+standaardwaarden zijn in de pagina geïnspecteerd; de volledige 3D-bediening en het
+ontgrendelen via de browser konden daar niet visueel worden getest. De bijbehorende
+statuslogica en berekeningen zijn wel automatisch getest.
 
-## Source data and reproducibility
+## Bronnen en opnieuw voorbereiden
 
-Upstream repository:
-https://github.com/Morrizzzzz/RCE_IVO-O_de_worf_Terschelling
+Repository: https://github.com/Morrizzzzz/RCE_IVO-O_de_worf_Terschelling/analysis_notebook
 
-Pinned revision: `a967dfde258246e745964014babb8ba528b396bc`.
+Notebook: `reconstructing_mound_terschelling.ipynb`
 
-`source-data/` contains the original GeoPackage and notebook. Large source AHN
-tiles are not bundled. The included `dist/data/` files contain only the required
-terrain crop and precomputed distance fields, plus provenance in `metadata.json`.
+Bronrevisie: `a967dfde258246e745964014babb8ba528b396bc`.
 
-To regenerate the browser data, install `numpy scipy rasterio shapely`, obtain
-the source GeoPackage at `UPSTREAM/data/de_worf.gpkg`, and download the AHN tile
-to `UPSTREAM/data/AHN5_M_151000_600000.TIF` from:
+De oorspronkelijke contour en het notebook staan in `source-data`. De compacte
+webgegevens staan in `dist/data`. Het volledige AHN-bestand is niet meegeleverd.
+
+Met `numpy scipy rasterio shapely` geïnstalleerd kun je de extra geometriegegevens
+opnieuw voorbereiden vanuit de meegeleverde contour:
+
+```sh
+python scripts/prepare_dynamic.py
+```
+
+Voor volledige herbouw plaats je het GeoPackage in `UPSTREAM/data/de_worf.gpkg` en
+het AHN-bestand in `UPSTREAM/data/AHN5_M_151000_600000.TIF`. Bron AHN:
 
 https://fsn1.your-objectstorage.com/hwh-ahn/AHN5_KM/02a_DTM_50cm/AHN5_M_151000_600000.TIF
-
-Then run:
 
 ```sh
 python scripts/prepare_data.py --source-dir UPSTREAM
 node scripts/test-model.mjs
 ```
 
-The script uses the notebook's original polygon, raster grid, buffer parameters,
-distance transform and fitted reference plane. Browser runtime dependencies
-(Three.js 0.170.0, OrbitControls and DM Sans) are bundled locally. No CDN is
-needed while using the app.
+Three.js 0.170.0, OrbitControls, JSTS 2.12.1 en DM Sans zijn lokaal meegeleverd;
+de website heeft tijdens gebruik geen CDN nodig.
 
-## Licence and attribution
+## Licentie
 
-Adapted from the RCE De Worf notebook and contour data, distributed under the
-upstream GPL-3.0 licence; see `LICENSE`. This adaptation also uses GPL-3.0.
-Three.js and OrbitControls are MIT-licensed; DM Sans uses the SIL Open Font
-License. Their notices are in `dist/vendor/`. AHN5 is credited as the source
-of the measured terrain. This is an independent research interface, not an
-official RCE website.
+Notebook, contour en deze aanpassing: GPL-3.0, zie `LICENSE`. Three.js/OrbitControls:
+MIT. JSTS: Eclipse Distribution License / Eclipse Public License. DM Sans: SIL Open
+Font License. De betreffende teksten staan in `dist/vendor`. Gemeten terrein: AHN5.
+Dit is een onafhankelijke onderzoeksinterface, geen officiële RCE-website.

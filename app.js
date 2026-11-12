@@ -1,17 +1,13 @@
 import * as THREE from 'three';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { calculateModel, reconstructionHeights, validateAngle } from './model.js';
+import { calculateModel, reconstructionHeights, validateAngle, createScenario, setDimension, resetScenario, DIMENSIONS } from './model.js';
+import { GeometryEngine } from './geometry.js';
 
 const $ = id => document.getElementById(id);
 const fmt = (value, digits=0) => value.toLocaleString('en-GB',{minimumFractionDigits:digits,maximumFractionDigits:digits});
-const state = {ditch:15,mound:30,view:'model',camera:'3d',wireframe:false};
-let data, model, heights, scene, camera, renderer, controls, surface, wire, sideMesh, lines, sectionLine;
+const state = createScenario(new URLSearchParams(location.search));
+let data, model, heights, scene, camera, renderer, controls, surface, wire, sideMesh, lines, sectionLine, geometry;
 let lastFitHeight=0, framePending=false, toastTimer;
-const query = new URLSearchParams(location.search);
-for (const [key,param] of [['ditch','ditch'],['mound','slope']]) {
-  if (query.has(param)) { try { state[key]=validateAngle(query.get(param)); } catch {} }
-}
-if(query.get('view')==='ahn') state.view='ahn';
 
 function toast(message) {
   $('toast').textContent=message; $('toast').hidden=false;
@@ -28,9 +24,24 @@ function syncControls() {
     $(key+'-angle').style.setProperty('--fill',`${(state[key]-1)/88*100}%`);
   }
 }
+function syncDimensions() {
+  for(const [key,spec] of Object.entries(DIMENSIONS)) {
+    const locked=state.locked[key],number=$(key+'-number'),range=$(key+'-range'),button=$('lock-'+key);
+    number.value=state[key].toFixed(1);range.value=state[key];
+    number.disabled=locked;range.disabled=locked;
+    range.style.setProperty('--fill',`${(state[key]-spec.min)/(spec.max-spec.min)*100}%`);
+    button.setAttribute('aria-pressed',String(!locked));
+    button.setAttribute('aria-label',`${locked?'Unlock':'Lock'} ${spec.label.toLowerCase()}`);
+    button.title=locked?'Unlock to change this dimension':'Lock this dimension at its current value';
+    button.classList.toggle('unlocked',!locked);
+    button.querySelector('use').setAttribute('href',locked?'#i-lock':'#i-unlock');
+    button.querySelector('span').textContent=locked?'Locked':'Editable';
+  }
+}
 function updateUrl() {
   const url=new URL(location.href);
   url.searchParams.set('ditch',state.ditch);url.searchParams.set('slope',state.mound);
+  for(const [key,param] of [['ditchWidth','ditch_width'],['ditchDepth','ditch_depth'],['slopeWidth','slope_width']])url.searchParams.set(param,state[key]);
   if(state.view==='ahn')url.searchParams.set('view','ahn');else url.searchParams.delete('view');
   history.replaceState(null,'',url);
 }
@@ -39,6 +50,8 @@ function updateNumbers() {
   $('metric-mound').innerHTML=`${fmt(model.moundVolume)}<em>m³</em>`;
   $('metric-ditch').innerHTML=`${fmt(model.ditchVolume)}<em>m³</em>`;
   $('metric-depth').innerHTML=`${fmt(model.actualDepth,2)}<em>m</em>`;
+  $('depth-cap-label').textContent=`maximum ${fmt(state.ditchDepth,2)} m`;
+  $('plateau-area').textContent=`${fmt(model.plateauArea,1)} m²`;
   $('ditch-shape').textContent=model.flatWidth>0
     ?`Depth-capped · ${fmt(model.flatWidth,2)} m flat bottom`
     :`V-shaped · reaches ${fmt(model.actualDepth,2)} m deep`;
@@ -52,8 +65,10 @@ function updateNumbers() {
 }
 function recalculate() {
   framePending=false;
-  model=calculateModel(data.meta,data.ditch,state.ditch,state.mound);
-  heights=reconstructionHeights(data.mound,data.ditch,model,data.meta.constants.ditchDepthCap);
+  geometry.update(state.ditchWidth,state.slopeWidth);
+  data.ditch=geometry.ditch;
+  model=calculateModel(data.meta,data.ditch,state.ditch,state.mound,state,geometry);
+  heights=reconstructionHeights(data.mound,data.ditch,model);
   updateNumbers();updateSurface();drawProfile();updateUrl();
   if(state.view==='model' && (model.height>Math.max(20,lastFitHeight*1.35) || (lastFitHeight>20&&model.height<lastFitHeight*.65)))fitCamera(state.camera);
 }
@@ -106,7 +121,7 @@ function buildScene() {
   wire=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:0x294834,wireframe:true,transparent:true,opacity:.12,depthWrite:false}));
   wire.position.y=.025;wire.visible=false;scene.add(wire);
   const ground=new THREE.Mesh(new THREE.PlaneGeometry(2000,2000),new THREE.ShadowMaterial({opacity:.11}));
-  ground.rotation.x=-Math.PI/2;ground.position.y=-4.5;ground.receiveShadow=true;scene.add(ground);
+  ground.name='shadow-ground';ground.rotation.x=-Math.PI/2;ground.position.y=-4.5;ground.receiveShadow=true;scene.add(ground);
   lines=new THREE.Group();scene.add(lines);
   createGrid();fitCamera('3d');
   new ResizeObserver(()=>resize()).observe(host);
@@ -129,12 +144,13 @@ function fitCamera(view='3d') {
   if(!camera)return;state.camera=view;
   const h=state.view==='model'?model.height:5;
   lastFitHeight=h;
-  const focusY=Math.max(0,(h-10)*.38),size=Math.max(67,h*1.35+30);
+  const aspect=$('scene').clientWidth/Math.max(1,$('scene').clientHeight);
+  const focusY=Math.max(0,(h-10)*.38),size=Math.max(view==='top'?92:75,(view==='3d'?125:92)/aspect,h*1.35+35);
   camera.top=size/2;camera.bottom=-size/2;camera.zoom=1;
   controls.target.set(0,focusY,0);
   if(view==='top')camera.position.set(0,focusY+Math.max(150,h+100),.001);
   else if(view==='side')camera.position.set(0,focusY+.3,Math.max(150,h+100));
-  else camera.position.set(88,focusY+80,105);
+  else camera.position.copy(new THREE.Vector3(88,80,105).normalize().multiplyScalar(Math.max(160,h*1.5+150)).add(controls.target));
   camera.lookAt(controls.target);camera.updateProjectionMatrix();controls.update();resize();
   for(const v of ['3d','top','side'])$('camera-'+v).classList.toggle('active',v===view);
 }
@@ -167,17 +183,19 @@ function updateSurface() {
   for(let i=0;i<values.length;i++){
     pos.setY(i,Number.isFinite(values[i])?values[i]:0);
     if(state.view==='ahn')color.copy(terrainLow).lerp(terrainHigh,THREE.MathUtils.clamp((values[i]-.3)/3.2,0,1));
-    else if(data.mound[i]>0)color.copy(moundLow).lerp(moundHigh,data.mound[i]/8);
-    else if(data.ditch[i]>0)color.copy(ditchTop).lerp(ditchLow,Math.min(-values[i]/1.7,1));
+    else if(data.mound[i]>0)color.copy(moundLow).lerp(moundHigh,Math.min(data.mound[i]/state.slopeWidth,1));
+    else if(data.ditch[i]>0)color.copy(ditchTop).lerp(ditchLow,Math.min(-values[i]/state.ditchDepth,1));
     else color.copy(ground);
     const variation=1+Math.sin(i*93.127)*.022;color.multiplyScalar(variation);col.setXYZ(i,color.r,color.g,color.b);
   }
   if(surface.userData.view!==state.view){surface.geometry.setIndex(buildIndices(values));surface.userData.view=state.view;}
   pos.needsUpdate=true;col.needsUpdate=true;
   surface.geometry.computeVertexNormals();surface.geometry.computeBoundingSphere();
+  scene.getObjectByName('shadow-ground').position.y=baseHeight()-.1;
   rebuildSides(values);rebuildLines(values);
   for(const name of ['reference-grid','scale-bar','scale-tick','scale-label'])scene.children.filter(c=>c.name===name).forEach(c=>c.visible=state.view==='model');
 }
+function baseHeight(){return state.view==='model'?-Math.max(4.4,state.ditchDepth+1.5):-4.4;}
 function rebuildSides(values) {
   if(sideMesh){scene.remove(sideMesh);disposeObject(sideMesh);}
   const {rows,cols}=data.meta.grid,ids=[];
@@ -190,7 +208,7 @@ function rebuildSides(values) {
   for(let k=0;k<ids.length-1;k++){
     const a=ids[k],b=ids[k+1];if(!Number.isFinite(values[a])||!Number.isFinite(values[b]))continue;
     const va=[p.getX(a),values[a],p.getZ(a)],vb=[p.getX(b),values[b],p.getZ(b)];
-    const ba=[va[0],-4.4,va[2]],bb=[vb[0],-4.4,vb[2]];
+    const ba=[va[0],baseHeight(),va[2]],bb=[vb[0],baseHeight(),vb[2]];
     for(const [v,c] of [[va,top],[ba,bottom],[vb,top],[vb,top],[ba,bottom],[bb,bottom]]){vertices.push(...v);colors.push(c.r,c.g,c.b);}
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));g.computeVertexNormals();
@@ -200,7 +218,9 @@ function rebuildLines(values) {
   disposeObject(lines);lines.clear();
   if(state.view==='model') {
     for(const [name,y,opacity] of [['mound',.04,.65],['outer',.04,.4],['plateau',model.height+.025,.45]]) {
-      const points=data.meta.contours[name].map(([x,n])=>new THREE.Vector3(x,y,-n));
+      const contour=name==='outer'?geometry.outer:name==='plateau'?geometry.plateau:data.meta.contours.mound;
+      if(!contour.length)continue;
+      const points=contour.map(([x,n])=>new THREE.Vector3(x,y,-n));
       const geo=new THREE.BufferGeometry().setFromPoints(points);
       lines.add(new THREE.Line(geo,new THREE.LineBasicMaterial({color:name==='plateau'?0xe0e6c7:0x6b7953,transparent:true,opacity})));
     }
@@ -267,7 +287,16 @@ function wireEvents() {
       catch(err){$('angle-error').textContent=err.message;$('angle-error').hidden=false;e.target.value=state[key];}
     });
   }
-  $('reset').addEventListener('click',()=>{state.ditch=15;state.mound=30;syncControls();$('angle-error').hidden=true;recalculate();toast('Notebook defaults restored: 15° / 30°.');});
+  for(const key of Object.keys(DIMENSIONS)) {
+    $('lock-'+key).addEventListener('click',()=>{state.locked[key]=!state.locked[key];syncDimensions();});
+    const change=e=>{
+      try{setDimension(state,key,e.target.value);$('angle-error').hidden=true;syncDimensions();schedule();}
+      catch(err){$('angle-error').textContent=err.message;$('angle-error').hidden=false;syncDimensions();}
+    };
+    $(key+'-range').addEventListener('input',change);
+    $(key+'-number').addEventListener('change',change);
+  }
+  $('reset').addEventListener('click',()=>{resetScenario(state);syncControls();syncDimensions();$('angle-error').hidden=true;recalculate();toast('Notebook defaults restored. All three dimensions are locked.');});
   $('view-model').addEventListener('click',()=>setView('model'));
   $('view-ahn').addEventListener('click',()=>setView('ahn'));
   for(const view of ['3d','top','side'])$('camera-'+view).addEventListener('click',()=>fitCamera(view));
@@ -279,15 +308,16 @@ function wireEvents() {
     renderer.render(scene,camera);
     // Include parameters and the height reference in the exported scientific image.
     const out=document.createElement('canvas'),src=renderer.domElement;
-    out.width=src.width;out.height=src.height+100;const ctx=out.getContext('2d');
+    out.width=src.width;out.height=src.height+130;const ctx=out.getContext('2d');
     ctx.fillStyle='#f6f7f2';ctx.fillRect(0,0,out.width,out.height);ctx.drawImage(src,0,0);
     ctx.fillStyle='#294634';ctx.font='20px sans-serif';ctx.fillText(`De Worf · ${state.view==='model'?'Relative reconstruction (m)':'AHN5 measured terrain (m NAP)'}`,24,src.height+35);
     ctx.font='15px sans-serif';ctx.fillText(`Ditch ${state.ditch}° · mound ${state.mound}° · mound ${fmt(model.moundVolume)} m³ · ditch ${fmt(model.ditchVolume)} m³`,24,src.height+65);
+    ctx.fillText(`Ditch width ${state.ditchWidth} m · depth limit ${state.ditchDepth} m · inward slope width ${state.slopeWidth} m`,24,src.height+94);
     out.toBlob(blob=>{if(blob){download(blob,`de-worf-${state.view}-${state.ditch}-${state.mound}.png`);toast('Snapshot downloaded.');}},'image/png');
   });
   $('download-summary').addEventListener('click',()=>{
-    const output={site:data.meta.name,exportedAt:new Date().toISOString(),parameters:{ditch_angle_degrees:state.ditch,slope_angle_degrees:state.mound,ditch_width:13,ditch_depth:1.7,slope_width:8},
-      results:{mound_height_m:model.height,mound_volume_m3:model.moundVolume,ditch_raster_volume_m3:model.ditchVolume,ditch_analytical_volume_m3:model.analyticalDitchVolume,actual_ditch_depth_m:model.actualDepth,flat_bottom_width_m:model.flatWidth,excavated_minus_mound_m3:model.balance},
+    const output={site:data.meta.name,exportedAt:new Date().toISOString(),parameters:{ditch_angle_degrees:state.ditch,slope_angle_degrees:state.mound,ditch_width:state.ditchWidth,ditch_depth:state.ditchDepth,slope_width:state.slopeWidth},
+      locks:{...state.locked},results:{plateau_area_m2:model.plateauArea,mound_height_m:model.height,mound_volume_m3:model.moundVolume,ditch_raster_volume_m3:model.ditchVolume,ditch_analytical_volume_m3:model.analyticalDitchVolume,actual_ditch_depth_m:model.actualDepth,flat_bottom_width_m:model.flatWidth,excavated_minus_mound_m3:model.balance},
       observed:data.meta.observed,source:{repository:data.meta.sourceRepository,commit:data.meta.sourceCommit,ahn:data.meta.ahnUrl},heightReference:'Model: relative to assumed zero. AHN5: m NAP.',assumptions:data.meta.notes};
     download(JSON.stringify(output,null,2),`de-worf-scenario-${state.ditch}-${state.mound}.json`,'application/json');toast('Scenario and source metadata downloaded.');
   });
@@ -297,7 +327,7 @@ function wireEvents() {
 $('method-open').addEventListener('click',()=>$('method-dialog').showModal());
 $('method-close').addEventListener('click',()=>$('method-dialog').close());
 $('method-dialog').addEventListener('click',e=>{if(e.target===$('method-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
-syncControls();
+syncControls();syncDimensions();
 try {
   const checked=async path=>{const r=await fetch(path);if(!r.ok)throw new Error(`Could not load ${path} (${r.status}).`);return r;};
   const [meta,terrain,mound,ditch]=await Promise.all([
@@ -307,12 +337,14 @@ try {
     checked('./data/ditch-distance.bin').then(r=>r.arrayBuffer()).then(b=>new Float32Array(b))
   ]);
   data={meta,terrain,mound,ditch};
+  geometry=new GeometryEngine(meta,mound);
   const size=meta.grid.rows*meta.grid.cols;
   if([terrain,mound,ditch].some(a=>a.length!==size))throw new Error('The terrain grid is incomplete.');
-  model=calculateModel(meta,ditch,state.ditch,state.mound);heights=reconstructionHeights(mound,ditch,model);
+  geometry.update(state.ditchWidth,state.slopeWidth);data.ditch=geometry.ditch;
+  model=calculateModel(meta,data.ditch,state.ditch,state.mound,state,geometry);heights=reconstructionHeights(mound,data.ditch,model);
   buildScene();wireEvents();recalculate();setView(state.view);
   $('pinned-source').href=`${meta.sourceRepository}/blob/${meta.sourceCommit}/${meta.sourceNotebook}`;
-  document.querySelectorAll('fieldset').forEach(f=>f.disabled=false);$('loading').hidden=true;
+  document.querySelectorAll('fieldset').forEach(f=>f.disabled=false);syncDimensions();$('loading').hidden=true;
 } catch(err) {
   console.error(err);$('loading').hidden=true;$('load-error').hidden=false;
   $('load-error').textContent=`The interactive terrain could not start. ${err.message} Please use a WebGL-enabled browser and serve the site over HTTP(S), rather than opening index.html directly.`;

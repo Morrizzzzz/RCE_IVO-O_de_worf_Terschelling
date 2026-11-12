@@ -128,3 +128,7 @@ for da, ma in [(1,1),(5,15),(10,20),(15,30),(30,30),(45,45),(60,60),(89,89)]:
                      'height':8*math.tan(math.radians(ma)), 'actualDepth':actual,'flatWidth':flat})
 (ROOT/'scripts/reference-values.json').write_text(json.dumps(fixtures,indent=2))
 print(json.dumps({'grid':metadata['grid'],'constants':metadata['constants'],'observed':metadata['observed'],'default':fixtures[3]},indent=2))
+
+# Version 2: retain the full inward distance field and the variable-width tables.
+import subprocess, sys
+subprocess.run([sys.executable,str(ROOT/'scripts/prepare_dynamic.py'),'--gpkg',str(args.source_dir/'data/de_worf.gpkg')],check=True)

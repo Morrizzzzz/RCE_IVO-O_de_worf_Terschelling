@@ -1,0 +1,233 @@
+[
+  {
+    "ditchAngle": 15,
+    "moundAngle": 30,
+    "ditchWidth": 13,
+    "ditchDepth": 1.7,
+    "slopeWidth": 8,
+    "ditchVolume": 1726.7159423828125,
+    "analyticalDitchVolume": 1629.9622991673466,
+    "moundVolume": 2121.31614660181,
+    "height": 4.618802153517006,
+    "actualDepth": 1.7,
+    "flatWidth": 0.31102725426581657,
+    "plateauArea": 184.36686943380144,
+    "ditchCells": 7489,
+    "window": [
+      26,
+      27,
+      119,
+      118
+    ]
+  },
+  {
+    "ditchAngle": 15,
+    "moundAngle": 30,
+    "ditchWidth": 20,
+    "ditchDepth": 1.7,
+    "slopeWidth": 8,
+    "ditchVolume": 3963.9345703125,
+    "analyticalDitchVolume": 3854.543978320066,
+    "moundVolume": 2121.31614660181,
+    "height": 4.618802153517006,
+    "actualDepth": 1.7,
+    "flatWidth": 7.311027254265817,
+    "plateauArea": 184.36686943380144,
+    "ditchCells": 13270,
+    "window": [
+      12,
+      13,
+      147,
+      146
+    ]
+  },
+  {
+    "ditchAngle": 15,
+    "moundAngle": 30,
+    "ditchWidth": 6,
+    "ditchDepth": 1.7,
+    "slopeWidth": 8,
+    "ditchVolume": 340.8734436035156,
+    "analyticalDitchVolume": 294.4039169810528,
+    "moundVolume": 2121.31614660181,
+    "height": 4.618802153517006,
+    "actualDepth": 0.8038475772933681,
+    "flatWidth": 0,
+    "plateauArea": 184.36686943380144,
+    "ditchCells": 2926,
+    "window": [
+      40,
+      41,
+      91,
+      90
+    ]
+  },
+  {
+    "ditchAngle": 30,
+    "moundAngle": 30,
+    "ditchWidth": 13,
+    "ditchDepth": 3,
+    "slopeWidth": 8,
+    "ditchVolume": 3553.99462890625,
+    "analyticalDitchVolume": 3372.6951955727204,
+    "moundVolume": 2121.31614660181,
+    "height": 4.618802153517006,
+    "actualDepth": 3,
+    "flatWidth": 2.607695154586736,
+    "plateauArea": 184.36686943380144,
+    "ditchCells": 7489,
+    "window": [
+      26,
+      27,
+      119,
+      118
+    ]
+  },
+  {
+    "ditchAngle": 10,
+    "moundAngle": 20,
+    "ditchWidth": 8,
+    "ditchDepth": 0.5,
+    "slopeWidth": 4,
+    "ditchVolume": 360.493896484375,
+    "analyticalDitchVolume": 331.45158621625427,
+    "moundVolume": 894.2502636922923,
+    "height": 1.4558809370648094,
+    "actualDepth": 0.5,
+    "flatWidth": 2.3287181803822907,
+    "plateauArea": 441.8572436964174,
+    "ditchCells": 4105,
+    "window": [
+      36,
+      37,
+      99,
+      98
+    ]
+  },
+  {
+    "ditchAngle": 45,
+    "moundAngle": 40,
+    "ditchWidth": 25,
+    "ditchDepth": 5,
+    "slopeWidth": 14,
+    "ditchVolume": 18579.12109375,
+    "analyticalDitchVolume": 18174.131039199106,
+    "moundVolume": 3447.2035067757565,
+    "height": 11.747394836481918,
+    "actualDepth": 5,
+    "flatWidth": 14.999999999999998,
+    "plateauArea": 3.609101988355752,
+    "ditchCells": 18168,
+    "window": [
+      2,
+      3,
+      167,
+      166
+    ]
+  },
+  {
+    "ditchAngle": 5,
+    "moundAngle": 15,
+    "ditchWidth": 1,
+    "ditchDepth": 0.1,
+    "slopeWidth": 0.5,
+    "ditchVolume": 5.080560207366943,
+    "analyticalDitchVolume": 2.3267853164565167,
+    "moundVolume": 104.25303845281921,
+    "height": 0.13397459621556135,
+    "actualDepth": 0.043744331762962003,
+    "flatWidth": 0,
+    "plateauArea": 752.8748874728828,
+    "ditchCells": 422,
+    "window": [
+      50,
+      51,
+      71,
+      70
+    ]
+  },
+  {
+    "ditchAngle": 60,
+    "moundAngle": 60,
+    "ditchWidth": 17.5,
+    "ditchDepth": 2.3,
+    "slopeWidth": 10.5,
+    "ditchVolume": 6046.43359375,
+    "analyticalDitchVolume": 5884.052732000748,
+    "moundVolume": 6915.7259643467705,
+    "height": 18.186533479473205,
+    "actualDepth": 2.3,
+    "flatWidth": 14.844188761727722,
+    "plateauArea": 77.63173121884282,
+    "ditchCells": 11066,
+    "window": [
+      17,
+      18,
+      137,
+      136
+    ]
+  },
+  {
+    "ditchAngle": 15,
+    "moundAngle": 30,
+    "ditchWidth": 13,
+    "ditchDepth": 1.7,
+    "slopeWidth": 12,
+    "ditchVolume": 1726.7159423828125,
+    "analyticalDitchVolume": 1629.9622991673466,
+    "moundVolume": 2352.707936634511,
+    "height": 6.928203230275509,
+    "actualDepth": 1.7,
+    "flatWidth": 0.31102725426581657,
+    "plateauArea": 34.70417281591634,
+    "ditchCells": 7489,
+    "window": [
+      26,
+      27,
+      119,
+      118
+    ]
+  },
+  {
+    "ditchAngle": 15,
+    "moundAngle": 30,
+    "ditchWidth": 13,
+    "ditchDepth": 1.7,
+    "slopeWidth": 2,
+    "ditchVolume": 1726.7159423828125,
+    "analyticalDitchVolume": 1629.9622991673466,
+    "moundVolume": 813.7273824138432,
+    "height": 1.1547005383792515,
+    "actualDepth": 1.7,
+    "flatWidth": 0.31102725426581657,
+    "plateauArea": 609.9656515317394,
+    "ditchCells": 7489,
+    "window": [
+      26,
+      27,
+      119,
+      118
+    ]
+  },
+  {
+    "ditchAngle": 89,
+    "moundAngle": 89,
+    "ditchWidth": 25,
+    "ditchDepth": 5,
+    "slopeWidth": 14,
+    "ditchVolume": 22710.0,
+    "analyticalDitchVolume": 22638.356139673095,
+    "moundVolume": 235359.60367366308,
+    "height": 802.059462830628,
+    "actualDepth": 5,
+    "flatWidth": 24.82544935071782,
+    "plateauArea": 3.609101988355752,
+    "ditchCells": 18168,
+    "window": [
+      2,
+      3,
+      167,
+      166
+    ]
+  }
+]
